@@ -1,0 +1,21 @@
+{
+  "name": "js-sink-classifier",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/classifier.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.11.5",
+    "@babel/traverse": "^7.11.5"
+  },
+  "devDependencies": {
+    "@types/node": "^14.11.8"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
