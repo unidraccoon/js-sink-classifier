@@ -1,8 +1,9 @@
 # Stoks Classifier in JS Code 
 
 ## Compilation 
-```tsc```
+`tsc`
 
 ## Run
 JS file on stdin
-```node src/classifier.js```
+
+`node src/classifier.js`
