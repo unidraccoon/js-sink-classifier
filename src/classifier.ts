@@ -24,20 +24,20 @@ function make_AST() {
 function getFunctionNameFromSignature(sinkBabelObject) {
   const sinkType: string = sinkBabelObject.type;
   if (
-    (sinkType == "Identifier" &&
-      (sinkBabelObject.name == "fetch" ||
-        sinkBabelObject.name == "axios" ||
-        sinkBabelObject.name == "$http")) ||
-    (sinkType == "MemberExpression" &&
+    (sinkType == 'Identifier' &&
+      (sinkBabelObject.name == 'fetch' ||
+        sinkBabelObject.name == 'axios' ||
+        sinkBabelObject.name == '$http')) ||
+    (sinkType == 'MemberExpression' &&
       LIBS.includes(sinkBabelObject.object.name) &&
       FUNCS.includes(sinkBabelObject.property.name))
   ) {
     let sinkName: string;
-    if (sinkBabelObject.type == "Identifier") {
+    if (sinkBabelObject.type == 'Identifier') {
       sinkName = sinkBabelObject.name;
     } else {
       sinkName =
-        sinkBabelObject.object.name + "." + sinkBabelObject.property.name;
+        sinkBabelObject.object.name + '.' + sinkBabelObject.property.name;
     }
 
     return sinkName;
@@ -46,8 +46,49 @@ function getFunctionNameFromSignature(sinkBabelObject) {
   }
 }
 
-function getArgumentsFromFunctionCall(args) {
+function parseArgument(arg) {
+  if (arg.type == 'BinaryExpression') {
+    // return {"BinaryExpression": [parseArgument(arg.left), parseArgument(arg.right)]}
+    return 'UNKNOWN';
+  }
 
+  if (arg.type == 'ObjectExpression') {
+    // let types = [];
+    // for (let i = 0; i < arg.properties.length; i++) {
+    //   types.push([
+    //     checkKey(arg.properties[i].key),
+    //     parseArgument(arg.properties[i].value),
+    //   ]);
+    // }
+    // return { ObjectExpression: types };
+    return 'UNKNOWN';
+  }
+
+  if (arg.type == 'ArrayExpression') {
+    // let types = [];
+    // for (let i = 0; i < arg.elements.length; i++) {
+    //   types.push(parseArgument(arg.elements[i]));
+    // }
+    // return { ArrayExpression: types };
+    return 'UNKNOWN';
+  }
+
+  if (arg.type == 'MemberExpression') {
+    // return arg.property.type;
+    return 'UNKNOWN';
+  }
+
+  if (arg.type == 'StringLiteral')
+
+  return arg.type;
+}
+
+function getArgumentsFromFunctionCall(sinkArguments) {
+  let args: string[] = [];
+  for (let i = 0; i < sinkArguments.length; i++) {
+    args.push(parseArgument(sinkArguments[i]));
+  }
+  return args;
 }
 
 function getSinksFromAST(ast) {
@@ -56,10 +97,10 @@ function getSinksFromAST(ast) {
       let sink: IFunctionCall = { args: [] };
       if ((sink.name = getFunctionNameFromSignature(path.node.callee))) {
         let sinkArguments = path.node.arguments;
-        for (let i = 0; i < sinkArguments.length; i++) {
-          // sink.args?.push(getArgumentsFromFunctionCall(sinkArguments[i]));
-        }
+        sink.args = getArgumentsFromFunctionCall(sinkArguments);
+
         // result.push(obj);
+        console.log(sink);
       }
     },
   });
